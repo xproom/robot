@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ROBOT 셀프 챌린지</title>
+  <meta name="description" content="6일간 함께하는 셀프 챌린지 미션 트래커 (정적 웹앱, 연습용 재구현)" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A4%96%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+<body>
+  <div id="previewBanner" class="preview-banner hidden">미리보기 모드 ON</div>
+
+  <header class="site-header">
+    <p class="eyebrow" id="brandEyebrow">SELF CHALLENGE</p>
+    <h1 id="brandTitle">ROBOT 셀프 챌린지</h1>
+    <span class="edition-tag" id="brandEdition">1기</span>
+  </header>
+
+  <main class="wrap">
+    <div id="app"><!-- rendered by app.js --></div>
+  </main>
+
+  <footer class="site-footer">
+    <div><span id="footerOrg">ROBOT Lab | © 2026 </span>Challenge</div>
+    <div>문의: <a id="footerMail" href="mailto:hello@example.com">hello@example.com</a></div>
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="./assets/app.js"></script>
+</body>
+</html>
