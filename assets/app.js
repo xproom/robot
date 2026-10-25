@@ -47,8 +47,11 @@
   function dayUnlockDate(dayNum) {
     return new Date(startDate().getTime() + (dayNum - 1) * MS_DAY);
   }
+  function isMaster() {
+    return !!(state.auth && state.auth.master);
+  }
   function isUnlocked(dayNum) {
-    if (state.previewMode) return true;
+    if (state.previewMode || isMaster()) return true;
     return todayMidnight().getTime() >= dayUnlockDate(dayNum).getTime();
   }
   function dayState(dayNum) {
@@ -129,13 +132,18 @@
       var pv = phone.value.trim();
       var cv = code.value.trim();
       if (!pv || !cv) { toast("전화번호와 접속코드를 입력해주세요."); return; }
-      if (cv.toUpperCase() !== String(DATA.demoAccessCode).toUpperCase()) {
+      // master account: opens every day regardless of the unlock schedule
+      var ma = DATA.masterAccount;
+      var master = !!ma && digits(pv) === digits(ma.phone) &&
+        cv.toUpperCase() === String(ma.code).toUpperCase();
+      if (!master && cv.toUpperCase() !== String(DATA.demoAccessCode).toUpperCase()) {
         toast("접속코드가 올바르지 않습니다. (데모 코드: " + DATA.demoAccessCode + ")");
         return;
       }
-      state.auth = { phone: pv, savedDevice: cb.checked };
+      state.auth = { phone: pv, savedDevice: cb.checked, master: master };
       if (!state.startDate) state.startDate = todayMidnight().toISOString();
       save(state);
+      if (master) toast("마스터 계정으로 입장했어요. 모든 일차가 열립니다.");
       go("#/");
       render();
     });
@@ -159,7 +167,12 @@
 
     var prog = el("div", "card");
     var head = el("div", "progress-head");
-    head.appendChild(el("strong", null, "진행 현황"));
+    var title = el("strong", null, "진행 현황");
+    if (isMaster()) {
+      title.appendChild(document.createTextNode(" "));
+      title.appendChild(el("span", "status-chip master", "마스터"));
+    }
+    head.appendChild(title);
     head.appendChild(el("span", "dday", ddayLabel()));
     prog.appendChild(head);
 
@@ -203,7 +216,7 @@
     listCard.appendChild(ul);
     app.appendChild(listCard);
 
-    var tools = el("div", "row-2");
+    var tools = el("div", isMaster() ? "" : "row-2");
     var pv = el("button", "btn secondary", state.previewMode ? "미리보기 모드 끄기" : "미리보기 모드 켜기");
     pv.addEventListener("click", function () {
       state.previewMode = !state.previewMode;
@@ -218,9 +231,14 @@
       go("#/");
       render();
     });
-    tools.appendChild(pv);
+    // preview mode is redundant for the master account (everything is open)
+    if (!isMaster()) tools.appendChild(pv);
     tools.appendChild(out);
     app.appendChild(tools);
+  }
+
+  function digits(s) {
+    return String(s || "").replace(/\D/g, "");
   }
 
   function fmtDate(d) {
