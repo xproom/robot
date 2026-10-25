@@ -9,6 +9,10 @@
     "email": "hello@example.com"
   },
   "demoAccessCode": "ROBOT",
+  "masterAccount": {
+    "phone": "010-0000-0000",
+    "code": "MASTER"
+  },
   "days": [
     {
       "day": 1,
